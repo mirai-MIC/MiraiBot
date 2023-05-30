@@ -1,15 +1,17 @@
 package com.catbot.plugins;
 
-import net.mamoe.mirai.event.GlobalEventChannel;
-import net.mamoe.mirai.event.events.MessageEvent;
+import com.catbot.annotation.Filter;
+import com.catbot.annotation.MatchType;
+import com.catbot.annotation.MiraiListener;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 import org.springframework.stereotype.Component;
 
 @Component
+@MiraiListener
 public class test {
 
-    public void sndMessage(){
-        GlobalEventChannel.INSTANCE.subscribeAlways(MessageEvent.class,event1 -> {
-            System.out.println(event1.getMessage().contentToString());
-        });
+    @Filter(value = "测试", matchType = MatchType.DEFAULT)
+    public void sndMessage(GroupMessageEvent event) {
+        event.getGroup().sendMessage("你好");
     }
 }
