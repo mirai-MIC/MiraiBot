@@ -1,5 +1,6 @@
 package com.catbot.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.internal.deps.okhttp3.OkHttpClient;
 import net.mamoe.mirai.internal.deps.okhttp3.Request;
@@ -22,12 +23,12 @@ import java.util.Objects;
  * @Version: 1.0
  */
 
-
+@Slf4j
 public class SendMsgUtils {
     public SendMsgUtils() {
     }
 
-    public static Image uploadAndCreateImage(Contact sender, @NotNull String imageUrl) throws IOException {
+    public static Image uploadAndCreateImage(Contact sender, @NotNull String imageUrl) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(imageUrl)
@@ -40,13 +41,13 @@ public class SendMsgUtils {
 
             ResponseBody responseBody = Objects.requireNonNull(response.body());
             InputStream inputStream = responseBody.byteStream();
-
             Image image = sender.uploadImage(ExternalResource.create(inputStream));
-
             inputStream.close();
             responseBody.close();
-
             return image;
+        }catch (IOException e) {
+            log.error(e.getMessage());
         }
+        return null;
     }
 }

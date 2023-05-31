@@ -58,6 +58,12 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.0.6</version>
+                <configuration>
+                    <!-- main方法所在类。 -->
+                    <mainClass>com.catbot.MiraiBotApplication</mainClass>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
             </plugin>
         </plugins>
     </build>
