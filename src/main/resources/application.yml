@@ -1,7 +1,7 @@
 
 mirai:
   bot:
-    qq-number: qqid
+    qq-number: 2150660037
     password: "password"
     device-info: "cache/deviceInfo.json"
 

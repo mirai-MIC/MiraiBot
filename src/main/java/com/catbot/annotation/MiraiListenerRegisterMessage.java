@@ -31,7 +31,6 @@ public class MiraiListenerRegisterMessage implements BeanPostProcessor {
 
     public MiraiListenerRegisterMessage(Bot bot) {
         this.bot = bot;
-
     }
 
     @Override
@@ -71,5 +70,5 @@ public class MiraiListenerRegisterMessage implements BeanPostProcessor {
         }
         return bean;
     }
-
 }
+
