@@ -6,7 +6,7 @@ import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.ListenerHost;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.BotEvent;
-import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -38,7 +38,7 @@ public class MiraiListenerRegisterMessage implements BeanPostProcessor {
         if (bean.getClass().isAnnotationPresent(MiraiListener.class)) {
             ListenerHost listenerHost = new SimpleListenerHost() {
                 @EventHandler
-                public void handleMessageEvent(MessageEvent event) throws InvocationTargetException, IllegalAccessException {
+                public void handleMessageEvent(GroupMessageEvent event) throws InvocationTargetException, IllegalAccessException {
                     Method[] methods = bean.getClass().getMethods();
                     for (Method method : methods) {
                         if (method.isAnnotationPresent(Filter.class)) {
