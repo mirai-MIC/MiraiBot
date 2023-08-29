@@ -1,4 +1,4 @@
-package com.catbot.plugins;
+package com.catbot.plugins.data;
 
 import lombok.Data;
 

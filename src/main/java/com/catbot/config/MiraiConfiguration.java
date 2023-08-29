@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import xyz.cssxsh.mirai.tool.FixProtocolVersion;
 
 @Configuration
 @Component
@@ -24,8 +25,8 @@ public class MiraiConfiguration {
 
     @Bean(initMethod = "login")
     public Bot login() {
-        Bot bot = BotFactory.INSTANCE.newBot(qqNumber, BotAuthorization.byQRCode());
-        bot.getConfiguration().setProtocol(BotConfiguration.MiraiProtocol.ANDROID_WATCH);
+        Bot bot = BotFactory.INSTANCE.newBot(qqNumber, BotAuthorization.byPassword(password));
+        bot.getConfiguration().setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PHONE);
         bot.getConfiguration().fileBasedDeviceInfo(deviceInfo);
         return bot;
     }

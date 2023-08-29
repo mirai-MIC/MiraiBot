@@ -4,10 +4,11 @@ import com.catbot.annotation.Filter;
 import com.catbot.annotation.MatchType;
 import com.catbot.annotation.MiraiListener;
 import com.catbot.plugins.data.MusicData;
-import com.catbot.utils.OK3HttpClient;
+import com.catbot.plugins.data.MusicShareData;
 import com.catbot.utils.PatternUtils;
 import com.catbot.utils.SendMsgUtils;
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.*;
 import org.springframework.stereotype.Component;
@@ -15,20 +16,29 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.HashMap;
 
+import static com.catbot.utils.OK3HttpClient.httpGetAsync;
+import static com.catbot.utils.SendMsgUtils.uploadAndCreateImage;
+
 @Component
 @MiraiListener
+@Slf4j
 public class plugs {
     @Filter(value = "测试", matchType = MatchType.DEFAULT)
     public void sndMessage(GroupMessageEvent event) throws IOException {
         At at = new At(event.getSender().getId());
-        ForwardMessageBuilder iNodes = new ForwardMessageBuilder(event.getSender());
         MessageChain singleMessages = new MessageChainBuilder()
                 .append(at)
-                .append(SendMsgUtils.uploadAndCreateImage(event.getSender(), "https://api.yimian.xyz/img?display=false"))
+                .append(uploadAndCreateImage(event.getGroup(), "https://api.lizh.cc/api/ipsign/"))
                 .append("\n")
                 .build();
-        iNodes.add(event.getSender().getId(), event.getSenderName(), singleMessages);
-        event.getGroup().sendMessage(iNodes.build());
+        event.getGroup().sendMessage(singleMessages);
+    }
+
+    @Filter(value = "你好")
+    public void send(GroupMessageEvent event) {
+
+        SendMsgUtils.sendMsg(event.getGroup(),"你好");
+//        SendMsgUtils.sendMsg(event.getGroup(),);
     }
 
 
@@ -43,17 +53,16 @@ public class plugs {
 
         MusicShareData musicShareData = new MusicShareData();
 
-        OK3HttpClient.httpGetAsync("https://xiaoapi.cn/API/yy_sq.php", params, null, result -> {
+        httpGetAsync("https://xiaoapi.cn/API/yy_sq.php", params, null, result -> {
             MusicData musicData = new Gson().fromJson(result, MusicData.class);
             if (musicData.getCode() == 200) {
                 musicShareData.setTitle(musicData.getName());
                 musicShareData.setSummary(musicData.getSinger());
-                musicShareData.setJumpUrl("http://xiaoapi.cn");
+                musicShareData.setJumpUrl("https://music.163.com/");
                 musicShareData.setMusicUrl(musicData.getUrl());
                 musicShareData.setPictureUrl(musicData.getCover());
-
                 MusicShare musicShare = new MusicShare(MusicKind.NeteaseCloudMusic, musicShareData.getTitle(), musicShareData.getSummary(), musicShareData.getJumpUrl(), musicShareData.getPictureUrl(), musicShareData.getMusicUrl());
-                event.getSender().sendMessage(musicShare);
+                event.getGroup().sendMessage(musicShare);
             }
         }, error -> {
             event.getGroup().sendMessage("Error: " + error.getMessage());

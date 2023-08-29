@@ -5,8 +5,7 @@ import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.ListenerHost;
 import net.mamoe.mirai.event.SimpleListenerHost;
-import net.mamoe.mirai.event.events.BotEvent;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -47,7 +46,7 @@ public class MiraiListenerRegisterMessage implements BeanPostProcessor {
                             MatchType matchType = filterAnnotation.matchType();
                             // 检查value是否为空，如果为空则不进行匹配
                             if (value.isEmpty()) {
-                                continue;
+                                method.invoke(bean, event);
                             }
                             // 如果matchType未指定，默认使用精确匹配
                             if (matchType == MatchType.DEFAULT) {
@@ -64,6 +63,9 @@ public class MiraiListenerRegisterMessage implements BeanPostProcessor {
                         }
                     }
                 }
+
+
+
             };
             EventChannel<BotEvent> eventChannel = bot.getEventChannel();
             eventChannel.registerListenerHost(listenerHost);
