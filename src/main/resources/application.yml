@@ -1,7 +1,9 @@
 
 mirai:
   bot:
-    qq-number: 2150660037
-    password: "password"
+    qq-number: 3445548663
+    password: wgz200209144074L
     device-info: "cache/deviceInfo.json"
-
+logging:
+  level:
+    root: info

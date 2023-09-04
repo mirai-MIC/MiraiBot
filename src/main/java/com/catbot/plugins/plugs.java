@@ -5,18 +5,26 @@ import com.catbot.annotation.MatchType;
 import com.catbot.annotation.MiraiListener;
 import com.catbot.plugins.data.MusicData;
 import com.catbot.plugins.data.MusicShareData;
+import com.catbot.utils.OK3HttpClient;
 import com.catbot.utils.PatternUtils;
 import com.catbot.utils.SendMsgUtils;
+import com.catbot.utils.VideoUploadUtil;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import kotlinx.coroutines.GlobalScope;
 import lombok.extern.slf4j.Slf4j;
+import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.*;
+import okhttp3.OkHttpClient;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
 
 import static com.catbot.utils.OK3HttpClient.httpGetAsync;
+import static com.catbot.utils.SendMsgUtils.sendAsync;
 import static com.catbot.utils.SendMsgUtils.uploadAndCreateImage;
 
 @Component
@@ -37,7 +45,7 @@ public class plugs {
     @Filter(value = "你好")
     public void send(GroupMessageEvent event) {
 
-        SendMsgUtils.sendMsg(event.getGroup(),"你好");
+        SendMsgUtils.sendMsg(event.getGroup(), "你好");
 //        SendMsgUtils.sendMsg(event.getGroup(),);
     }
 
@@ -67,7 +75,16 @@ public class plugs {
         }, error -> {
             event.getGroup().sendMessage("Error: " + error.getMessage());
         });
-
     }
 
+    @Filter(value = "看小姐姐")
+    public void Video(GroupMessageEvent event) throws IOException {
+        String s = OK3HttpClient.httpGet("https://api.xn--ei1aa.cn/API/ks_new.php", null, null);
+        JsonObject jsonObject = new Gson().fromJson(s, JsonObject.class);
+        JsonObject asJsonObject = jsonObject.get("data").getAsJsonObject();
+        String cover = asJsonObject.get("Cover").getAsString();
+        String Video = asJsonObject.get("Video").getAsString();
+        ShortVideo shortVideo = VideoUploadUtil.uploadVideoAndThumbnail(event.getGroup(), Video, cover, "");
+        sendAsync(event.getGroup(),shortVideo);
+    }
 }
