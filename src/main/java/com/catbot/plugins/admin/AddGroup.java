@@ -7,6 +7,8 @@ import net.mamoe.mirai.event.ListenerHost;
 import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * @BelongsProject: MiraiBot
  * @BelongsPackage: com.catbot.plugins.admin
@@ -19,12 +21,17 @@ import org.springframework.stereotype.Component;
 //@MiraiListener
 @MiraiEventListener
 public class AddGroup implements ListenerHost {
+
+    private static final Long master = 3092179918L;
+
     @Listener(matchType = MatchType.JOIN_GROUP, method = BotInvitedJoinGroupRequestEvent.class)
     public void addGroup(BotInvitedJoinGroupRequestEvent event) {
+        long id = Objects.requireNonNull(event.getInvitor()).getId();
+        if (id != master) return;
         System.out.println("触发成功");
         System.out.println(event.getInvitorId());
         event.accept();
     }
-    
+
 
 }

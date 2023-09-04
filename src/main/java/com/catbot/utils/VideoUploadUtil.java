@@ -14,13 +14,8 @@ import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.message.data.ShortVideo;
 import net.mamoe.mirai.utils.ExternalResource;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Objects;
 
 import static com.catbot.utils.SendMsgUtils.downloadExternalResource;
 

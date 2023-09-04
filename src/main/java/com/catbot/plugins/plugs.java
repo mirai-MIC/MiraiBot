@@ -6,8 +6,6 @@ import com.catbot.annotation.MiraiEventListener;
 import com.catbot.plugins.data.MusicData;
 import com.catbot.plugins.data.MusicShareData;
 import com.catbot.utils.OK3HttpClient;
-import com.catbot.utils.PatternUtils;
-import com.catbot.utils.SendMsgUtils;
 import com.catbot.utils.VideoUploadUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -18,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.catbot.utils.OK3HttpClient.httpGetAsync;
 import static com.catbot.utils.SendMsgUtils.sendAsync;
@@ -35,23 +35,22 @@ public class plugs {
                 .append(uploadAndCreateImage(event.getGroup(), "https://api.lizh.cc/api/ipsign/"))
                 .append("\n")
                 .build();
-        event.getGroup().sendMessage(singleMessages);
-    }
-
-    @Listener(value = "你好", method = GroupMessageEvent.class)
-    public void send(GroupMessageEvent event) {
-
-        SendMsgUtils.sendMsg(event.getGroup(), "你好");
-//        SendMsgUtils.sendMsg(event.getGroup(),);
+        sendAsync(event.getGroup(),singleMessages);
     }
 
 
-    @Listener(value = "/点歌 ", matchType = MatchType.REGEX_CONTAINS, method = GroupMessageEvent.class)
+    @Listener(method = GroupMessageEvent.class)
     public void MusicSend(GroupMessageEvent event) {
+        System.out.println("触发");
         String text = event.getMessage().contentToString();
-        String pattern = PatternUtils.getPattern(text, "/点歌\\s+(.*)");
+        Pattern pattern = Pattern.compile("/点歌\\s+(.*)");
+        Matcher matcher = pattern.matcher(text);
+
+        if (!matcher.find()) return;
+        String songName = matcher.group(1);
+
         var params = new HashMap<String, Object>();
-        params.put("msg", pattern);
+        params.put("msg", songName);
         params.put("type", "json");
         params.put("n", 1);
 
@@ -66,11 +65,12 @@ public class plugs {
                 musicShareData.setMusicUrl(musicData.getUrl());
                 musicShareData.setPictureUrl(musicData.getCover());
                 MusicShare musicShare = new MusicShare(MusicKind.NeteaseCloudMusic, musicShareData.getTitle(), musicShareData.getSummary(), musicShareData.getJumpUrl(), musicShareData.getPictureUrl(), musicShareData.getMusicUrl());
-                event.getGroup().sendMessage(musicShare);
+                sendAsync(event.getGroup(),musicShare);
             }
         }, error -> {
             event.getGroup().sendMessage("Error: " + error.getMessage());
         });
+
     }
 
     @Listener(value = "看小姐姐", method = GroupMessageEvent.class)

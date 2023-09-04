@@ -9,6 +9,7 @@ import net.mamoe.mirai.internal.deps.okhttp3.Response;
 import net.mamoe.mirai.internal.deps.okhttp3.ResponseBody;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.Message;
+import net.mamoe.mirai.message.data.MusicShare;
 import net.mamoe.mirai.utils.ExternalResource;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +40,7 @@ public class SendMsgUtils {
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Failed to download image: " + response);
+                log.error("Failed to download image: " + response);
             }
             ResponseBody responseBody = Objects.requireNonNull(response.body());
             InputStream inputStream = responseBody.byteStream();
@@ -57,7 +58,7 @@ public class SendMsgUtils {
 
         try (okhttp3.Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Failed to download resource: " + response);
+                log.error("Failed to download resource: " + response);
             }
             okhttp3.ResponseBody responseBody = Objects.requireNonNull(response.body());
             InputStream inputStream = responseBody.byteStream();
@@ -72,26 +73,32 @@ public class SendMsgUtils {
     }
 
 
-    public static void sendMsg(Group group, String messages) {
-        group.sendMessage(messages);
-    }
-
-    public static CompletableFuture<Void> sendAsync(Group group, Message message){
-        return CompletableFuture.runAsync(()->{
+    public static CompletableFuture<Void> sendAsync(Group group, Message message) {
+        return CompletableFuture.runAsync(() -> {
             try {
                 group.sendMessage(message);
             } catch (Exception e) {
-                log.error("Failed to send message "+e.getMessage());
+                log.error("Failed to send message " + e.getMessage());
             }
         });
     }
 
-    public static CompletableFuture<Void> sendAsync(Group group, String message){
-        return CompletableFuture.runAsync(()->{
+    public static CompletableFuture<Void> sendAsync(Group group, MusicShare musicShare) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                group.sendMessage(musicShare);
+            } catch (Exception e) {
+                log.error("Failed to send message " + e.getMessage());
+            }
+        });
+    }
+
+    public static CompletableFuture<Void> sendAsync(Group group, String message) {
+        return CompletableFuture.runAsync(() -> {
             try {
                 group.sendMessage(message);
             } catch (Exception e) {
-                log.error("Failed to send message "+e.getMessage());
+                log.error("Failed to send message " + e.getMessage());
             }
         });
     }
