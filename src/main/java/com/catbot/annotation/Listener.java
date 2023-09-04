@@ -7,8 +7,11 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Filter {
+public @interface Listener {
     String value() default "";
 
     MatchType matchType() default MatchType.DEFAULT;
+    Class<?> method(); // 事件类型
+
+
 }

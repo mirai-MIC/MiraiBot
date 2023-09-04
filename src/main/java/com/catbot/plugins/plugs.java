@@ -1,8 +1,8 @@
 package com.catbot.plugins;
 
-import com.catbot.annotation.Filter;
+import com.catbot.annotation.Listener;
 import com.catbot.annotation.MatchType;
-import com.catbot.annotation.MiraiListener;
+import com.catbot.annotation.MiraiEventListener;
 import com.catbot.plugins.data.MusicData;
 import com.catbot.plugins.data.MusicShareData;
 import com.catbot.utils.OK3HttpClient;
@@ -11,7 +11,6 @@ import com.catbot.utils.SendMsgUtils;
 import com.catbot.utils.VideoUploadUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.*;
@@ -25,10 +24,10 @@ import static com.catbot.utils.SendMsgUtils.sendAsync;
 import static com.catbot.utils.SendMsgUtils.uploadAndCreateImage;
 
 @Component
-@MiraiListener
 @Slf4j
+@MiraiEventListener
 public class plugs {
-    @Filter(value = "测试", matchType = MatchType.DEFAULT)
+    @Listener(value = "测试", matchType = MatchType.DEFAULT, method = GroupMessageEvent.class)
     public void sndMessage(GroupMessageEvent event) throws IOException {
         At at = new At(event.getSender().getId());
         MessageChain singleMessages = new MessageChainBuilder()
@@ -39,7 +38,7 @@ public class plugs {
         event.getGroup().sendMessage(singleMessages);
     }
 
-    @Filter(value = "你好")
+    @Listener(value = "你好", method = GroupMessageEvent.class)
     public void send(GroupMessageEvent event) {
 
         SendMsgUtils.sendMsg(event.getGroup(), "你好");
@@ -47,7 +46,7 @@ public class plugs {
     }
 
 
-    @Filter(value = "/点歌 ", matchType = MatchType.REGEX_CONTAINS)
+    @Listener(value = "/点歌 ", matchType = MatchType.REGEX_CONTAINS, method = GroupMessageEvent.class)
     public void MusicSend(GroupMessageEvent event) {
         String text = event.getMessage().contentToString();
         String pattern = PatternUtils.getPattern(text, "/点歌\\s+(.*)");
@@ -74,7 +73,7 @@ public class plugs {
         });
     }
 
-    @Filter(value = "看小姐姐")
+    @Listener(value = "看小姐姐", method = GroupMessageEvent.class)
     public void Video(GroupMessageEvent event) throws IOException {
         try {
             String s = OK3HttpClient.httpGet("https://api.xn--ei1aa.cn/API/ks_new.php", null, null);
@@ -83,8 +82,8 @@ public class plugs {
             String cover = asJsonObject.get("Cover").getAsString();
             String Video = asJsonObject.get("Video").getAsString();
             ShortVideo shortVideo = VideoUploadUtil.uploadVideoAndThumbnail(event.getGroup(), Video, cover, "");
-            sendAsync(event.getGroup(),shortVideo);
-        } catch (JsonSyntaxException | IOException e) {
+            sendAsync(event.getGroup(), shortVideo);
+        } catch (Exception e) {
             log.warn("Error uploading Video %s".formatted(e.getMessage()));
         }
     }

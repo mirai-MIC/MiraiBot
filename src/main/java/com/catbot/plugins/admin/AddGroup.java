@@ -1,12 +1,10 @@
 package com.catbot.plugins.admin;
 
-import com.catbot.annotation.Filter;
+import com.catbot.annotation.Listener;
 import com.catbot.annotation.MatchType;
-import com.catbot.annotation.MiraiListener;
-import net.mamoe.mirai.data.RequestEventData;
+import com.catbot.annotation.MiraiEventListener;
+import net.mamoe.mirai.event.ListenerHost;
 import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent;
-import net.mamoe.mirai.event.events.MemberJoinEvent;
-import net.mamoe.mirai.event.events.MemberJoinRequestEvent;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,12 +16,15 @@ import org.springframework.stereotype.Component;
  * @Version: 1.0
  */
 @Component
-@MiraiListener
-public class AddGroup {
-    @Filter(matchType = MatchType.JOIN_GROUP)
+//@MiraiListener
+@MiraiEventListener
+public class AddGroup implements ListenerHost {
+    @Listener(matchType = MatchType.JOIN_GROUP, method = BotInvitedJoinGroupRequestEvent.class)
     public void addGroup(BotInvitedJoinGroupRequestEvent event) {
         System.out.println("触发成功");
         System.out.println(event.getInvitorId());
         event.accept();
     }
+    
+
 }

@@ -1,9 +1,10 @@
 package com.catbot.plugins.Lister;
 
-import com.catbot.annotation.Filter;
-import com.catbot.annotation.MiraiListener;
+import com.catbot.annotation.Listener;
+import com.catbot.annotation.MiraiEventListener;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.Bot;
+import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent;
 import net.mamoe.mirai.event.events.GroupEvent;
 import net.mamoe.mirai.event.events.MemberJoinEvent;
 import net.mamoe.mirai.event.events.MemberLeaveEvent;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-@MiraiListener
+@MiraiEventListener
 @Slf4j
 public class GroupAdd {
     private final Bot bot;
@@ -30,7 +31,7 @@ public class GroupAdd {
         this.bot = bot;
     }
 
-    @Filter(value = "")
+    @Listener(method = BotInvitedJoinGroupRequestEvent.class, value = "")
     public void groupAdd(GroupEvent event) {
         try {
             if (event instanceof MemberJoinEvent joinEvent) {

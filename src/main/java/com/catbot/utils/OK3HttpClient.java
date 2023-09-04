@@ -31,16 +31,18 @@ public class OK3HttpClient {
      */
     public static String httpGet(String url, Map<String, Object> params, Map<String, String> headMap) {
         // 设置HTTP请求参数
+
         String result = null;
-        url += getParams(params);
-        var setHeaders = SetHeaders(headMap);
-        var okHttpClient = new OkHttpClient();
-        Request.Builder builder = new Request.Builder();
-        builder.url(url);
-        builder.headers(setHeaders);
-        var request = builder.build();
-        var call = okHttpClient.newCall(request);
         try {
+            url += getParams(params);
+            var setHeaders = SetHeaders(headMap);
+            var okHttpClient = new OkHttpClient();
+            Request.Builder builder = new Request.Builder();
+            builder.url(url);
+            builder.headers(setHeaders);
+            var request = builder.build();
+            var call = okHttpClient.newCall(request);
+
             var response = call.execute();
             result = response.body().string();
         } catch (Exception e) {
