@@ -78,13 +78,21 @@ public class SendMsgUtils {
 
     public static CompletableFuture<Void> sendAsync(Group group, Message message){
         return CompletableFuture.runAsync(()->{
-            group.sendMessage(message);
+            try {
+                group.sendMessage(message);
+            } catch (Exception e) {
+                log.error("Failed to send message "+e.getMessage());
+            }
         });
     }
 
     public static CompletableFuture<Void> sendAsync(Group group, String message){
         return CompletableFuture.runAsync(()->{
-            group.sendMessage(message);
+            try {
+                group.sendMessage(message);
+            } catch (Exception e) {
+                log.error("Failed to send message "+e.getMessage());
+            }
         });
     }
 

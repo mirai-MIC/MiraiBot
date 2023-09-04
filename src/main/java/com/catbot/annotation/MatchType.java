@@ -13,5 +13,6 @@ package com.catbot.annotation;
 public enum MatchType {
     DEFAULT,
     REGEX_CONTAINS,
-    EQUALS
+    EQUALS,
+    JOIN_GROUP
 }

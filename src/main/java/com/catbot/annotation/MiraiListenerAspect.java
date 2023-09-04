@@ -2,10 +2,7 @@ package com.catbot.annotation;
 
 
 import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.event.EventChannel;
-import net.mamoe.mirai.event.EventHandler;
-import net.mamoe.mirai.event.ListenerHost;
-import net.mamoe.mirai.event.SimpleListenerHost;
+import net.mamoe.mirai.event.*;
 import net.mamoe.mirai.event.events.BotEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.aspectj.lang.JoinPoint;
@@ -38,12 +35,12 @@ public class MiraiListenerAspect {
         this.bot = bot;
     }
 
-    @Before("@annotation(miraiListener)")
-    public void registerListenerHost(JoinPoint joinPoint, MiraiListener miraiListener) {
+    @Before("@annotation(MiraiListener)")
+    public void registerListenerHost(JoinPoint joinPoint) {
         Object target = joinPoint.getTarget();
         ListenerHost listenerHost = new SimpleListenerHost() {
             @EventHandler
-            public void handleMessageEvent(MessageEvent event) throws InvocationTargetException, IllegalAccessException {
+            public void handleMessageEvent(Event event) throws InvocationTargetException, IllegalAccessException {
                 Method[] methods = target.getClass().getMethods();
                 for (Method method : methods) {
                     if (method.isAnnotationPresent(EventHandler.class)) {
