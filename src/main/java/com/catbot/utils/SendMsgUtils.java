@@ -3,13 +3,12 @@ package com.catbot.utils;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.Group;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.internal.deps.okhttp3.OkHttpClient;
 import net.mamoe.mirai.internal.deps.okhttp3.Request;
 import net.mamoe.mirai.internal.deps.okhttp3.Response;
 import net.mamoe.mirai.internal.deps.okhttp3.ResponseBody;
-import net.mamoe.mirai.message.data.Image;
-import net.mamoe.mirai.message.data.Message;
-import net.mamoe.mirai.message.data.MusicShare;
+import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +30,34 @@ import java.util.concurrent.CompletableFuture;
 public class SendMsgUtils {
     public SendMsgUtils() {
     }
+
+    /**
+     * 禁言功能
+     *
+     * @param event
+     * @param muteTime
+     */
+    public static void isMute(GroupMessageEvent event, int muteTime) {
+        for (SingleMessage singleMessage : event.getMessage()) {
+            if (singleMessage instanceof At at) {
+                Objects.requireNonNull(event.getGroup().get(at.getTarget())).mute(muteTime);
+            }
+        }
+    }
+
+    /**
+     * 结束禁言
+     *
+     * @param event
+     */
+    public static void isUnMute(GroupMessageEvent event) {
+        for (SingleMessage singleMessage : event.getMessage()) {
+            if (singleMessage instanceof At at) {
+                Objects.requireNonNull(event.getGroup().get(at.getTarget())).unmute();
+            }
+        }
+    }
+
 
     public static Image uploadAndCreateImage(Contact sender, @NotNull String imageUrl) throws IOException {
         OkHttpClient client = new OkHttpClient();

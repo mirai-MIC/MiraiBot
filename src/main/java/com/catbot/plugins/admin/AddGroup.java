@@ -24,7 +24,7 @@ public class AddGroup implements ListenerHost {
 
     private static final Long master = 3092179918L;
 
-    @Listener(matchType = MatchType.JOIN_GROUP, method = BotInvitedJoinGroupRequestEvent.class)
+    @Listener(method = BotInvitedJoinGroupRequestEvent.class)
     public void addGroup(BotInvitedJoinGroupRequestEvent event) {
         long id = Objects.requireNonNull(event.getInvitor()).getId();
         if (id != master) return;

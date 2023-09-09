@@ -56,13 +56,16 @@
             <artifactId>async-http-client</artifactId>
             <version>2.12.3</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>fix</artifactId>
-            <version>1.9.10</version>
+            <version>1.10.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/fix-protocol-version-1.9.10.mirai2.jar</systemPath>
+            <systemPath>${project.basedir}/lib/fix-protocol-version-1.10.0.mirai2.jar</systemPath>
         </dependency>
 
     </dependencies>

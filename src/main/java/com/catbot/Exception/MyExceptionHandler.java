@@ -18,6 +18,5 @@ public class MyExceptionHandler {
     public void handleException(Exception exception) {
         // 在这里处理异常逻辑，例如记录日志或发送错误消息
         System.out.println(exception.getMessage());
-
     }
 }

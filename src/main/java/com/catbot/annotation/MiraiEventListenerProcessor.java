@@ -1,6 +1,7 @@
 package com.catbot.annotation;
 
 
+import com.catbot.utils.PatternUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.Event;
@@ -38,6 +39,34 @@ public class MiraiEventListenerProcessor {
         registerEventListeners();
     }
 
+    //    private void registerEventListeners() {
+//        applicationContext.getBeansWithAnnotation(MiraiEventListener.class).forEach((beanName, bean) -> {
+//            Class<?> clazz = bean.getClass();
+//            Method[] methods = clazz.getDeclaredMethods();
+//            for (Method method : methods) {
+//                if (method.isAnnotationPresent(Listener.class)) {
+//                    Listener filterAnnotation = method.getAnnotation(Listener.class);
+//                    Class<?> eventType = filterAnnotation.method();
+//                    String value = filterAnnotation.value();
+//                    Class<? extends Event> eventSubtype = (Class<? extends Event>) eventType;
+//                    GlobalEventChannel.INSTANCE.subscribeAlways(eventSubtype, event -> {
+//                        try {
+//                            if (event instanceof MessageEvent) {
+//                                String messageContent = ((MessageEvent) event).getMessage().contentToString();
+//                                if (value.isEmpty() || messageContent.equals(value)) {
+//                                    method.invoke(bean, event);
+//                                }
+//                            } else {
+//                                method.invoke(bean, event);
+//                            }
+//                        } catch (Exception e) {
+//                            log.error(e.getMessage());
+//                        }
+//                    });
+//                }
+//            }
+//        });
+//    }
     private void registerEventListeners() {
         applicationContext.getBeansWithAnnotation(MiraiEventListener.class).forEach((beanName, bean) -> {
             Class<?> clazz = bean.getClass();
@@ -48,12 +77,22 @@ public class MiraiEventListenerProcessor {
                     Class<?> eventType = filterAnnotation.method();
                     String value = filterAnnotation.value();
                     Class<? extends Event> eventSubtype = (Class<? extends Event>) eventType;
+                    boolean useRegex = filterAnnotation.useRegex(); // 获取是否使用正则表达式标志
+
                     GlobalEventChannel.INSTANCE.subscribeAlways(eventSubtype, event -> {
                         try {
-                            if (event instanceof MessageEvent) {
-                                String messageContent = ((MessageEvent) event).getMessage().contentToString();
-                                if (value.isEmpty() || messageContent.equals(value)) {
-                                    method.invoke(bean, event);
+                            if (event instanceof MessageEvent messageEvent) {
+                                String messageContent = messageEvent.getMessage().contentToString();
+                                if (useRegex) {
+                                    // 使用正则表达式匹配消息内容
+                                    if (messageContent.matches(".*" + value + ".*")){
+                                        method.invoke(bean, event);
+                                    }
+                                } else {
+                                    // 不使用正则表达式，直接比较消息内容
+                                    if (value.isEmpty() || messageContent.equals(value)) {
+                                        method.invoke(bean, event);
+                                    }
                                 }
                             } else {
                                 method.invoke(bean, event);
@@ -66,4 +105,5 @@ public class MiraiEventListenerProcessor {
             }
         });
     }
+
 }

@@ -23,39 +23,21 @@ public class VideoUploadUtil {
 
     public static ShortVideo uploadVideoAndThumbnail(Contact sender, String videoUrl, String thumbnailUrl, String videoName) throws IOException {
         OkHttpClient client = new OkHttpClient();
-
         // 下载视频
         ExternalResource videoResource = downloadExternalResource(client, videoUrl);
-
-        // 下载缩略图
-        ExternalResource thumbnailResource = downloadExternalResource(client, thumbnailUrl);
+        ExternalResource thumbnailResource = null;
+        if (thumbnailUrl != null) {
+            // 下载缩略图
+            thumbnailResource = downloadExternalResource(client, thumbnailUrl);
+        }
 
         // 上传视频和缩略图
+        assert thumbnailResource != null;
         ShortVideo shortVideo = sender.uploadShortVideo(thumbnailResource, videoResource, videoName);
         videoResource.close();
         thumbnailResource.close();
         return shortVideo;
     }
 
-//    private static ExternalResource downloadExternalResource(OkHttpClient client, String url) throws IOException {
-//        Request request = new Request.Builder()
-//                .url(url)
-//                .build();
-//
-//        try (Response response = client.newCall(request).execute()) {
-//            if (!response.isSuccessful()) {
-//                throw new IOException("Failed to download resource: " + response);
-//            }
-//            ResponseBody responseBody = Objects.requireNonNull(response.body());
-//            InputStream inputStream = responseBody.byteStream();
-//
-//            // 创建 ExternalResource 对象
-//            ExternalResource resource = ExternalResource.create(inputStream);
-//
-//            inputStream.close();
-//            responseBody.close();
-//            return resource;
-//        }
-//    }
 }
 

@@ -8,11 +8,21 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Listener {
+    /**
+     * 触发命令参数
+     */
     String value() default "";
 
     MatchType matchType() default MatchType.DEFAULT;
 
-    Class<?> method(); // 事件类型
+    /**
+     * 事件类型
+     */
+    Class<?> method();
 
+    /**
+     * 是否启用正则
+     */
+    boolean useRegex() default false;
 
 }
