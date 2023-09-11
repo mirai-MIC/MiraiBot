@@ -1,7 +1,6 @@
 package com.catbot.annotation;
 
 
-import com.catbot.utils.PatternUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.Event;
@@ -25,6 +24,7 @@ import java.lang.reflect.Method;
 @Component
 @Slf4j
 public class MiraiEventListenerProcessor {
+
     /**
      * 这段代码是一个事件监听器的处理器，它的主要功能是扫描Spring应用上下文中带有@MiraiEventListener注解的Bean，并为这些Bean注册事件监听器。当事件触发时，它会根据@Filter注解中的条件来决定是否调用相应的方法。
      * 虽然这段代码没有显式地使用AOP（切面）来实现，但它本身具有一定的切面特性，因为它通过扫描Bean并根据注解条件来触发方法调用，这与AOP的思想有些类似。所以，可以说这个代码在某种程度上实现了一种简单的事件驱动的切面。
@@ -39,34 +39,6 @@ public class MiraiEventListenerProcessor {
         registerEventListeners();
     }
 
-    //    private void registerEventListeners() {
-//        applicationContext.getBeansWithAnnotation(MiraiEventListener.class).forEach((beanName, bean) -> {
-//            Class<?> clazz = bean.getClass();
-//            Method[] methods = clazz.getDeclaredMethods();
-//            for (Method method : methods) {
-//                if (method.isAnnotationPresent(Listener.class)) {
-//                    Listener filterAnnotation = method.getAnnotation(Listener.class);
-//                    Class<?> eventType = filterAnnotation.method();
-//                    String value = filterAnnotation.value();
-//                    Class<? extends Event> eventSubtype = (Class<? extends Event>) eventType;
-//                    GlobalEventChannel.INSTANCE.subscribeAlways(eventSubtype, event -> {
-//                        try {
-//                            if (event instanceof MessageEvent) {
-//                                String messageContent = ((MessageEvent) event).getMessage().contentToString();
-//                                if (value.isEmpty() || messageContent.equals(value)) {
-//                                    method.invoke(bean, event);
-//                                }
-//                            } else {
-//                                method.invoke(bean, event);
-//                            }
-//                        } catch (Exception e) {
-//                            log.error(e.getMessage());
-//                        }
-//                    });
-//                }
-//            }
-//        });
-//    }
     private void registerEventListeners() {
         applicationContext.getBeansWithAnnotation(MiraiEventListener.class).forEach((beanName, bean) -> {
             Class<?> clazz = bean.getClass();
@@ -85,7 +57,7 @@ public class MiraiEventListenerProcessor {
                                 String messageContent = messageEvent.getMessage().contentToString();
                                 if (useRegex) {
                                     // 使用正则表达式匹配消息内容
-                                    if (messageContent.matches(".*" + value + ".*")){
+                                    if (messageContent.matches(".*" + value + ".*")) {
                                         method.invoke(bean, event);
                                     }
                                 } else {

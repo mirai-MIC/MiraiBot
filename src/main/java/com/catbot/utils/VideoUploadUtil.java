@@ -1,14 +1,5 @@
 package com.catbot.utils;
 
-/**
- * @BelongsProject: MiraiBot
- * @BelongsPackage: com.catbot.utils
- * @Author: mi
- * @CreateTime: 2023/9/4 12:55
- * @Description:
- * @Version: 1.0
- */
-
 
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.message.data.ShortVideo;
@@ -19,6 +10,14 @@ import java.io.IOException;
 
 import static com.catbot.utils.SendMsgUtils.downloadExternalResource;
 
+/**
+ * @BelongsProject: MiraiBot
+ * @BelongsPackage: com.catbot.utils
+ * @Author: mi
+ * @CreateTime: 2023/9/4 12:55
+ * @Description: 上传视频
+ * @Version: 1.0
+ */
 public class VideoUploadUtil {
 
     public static ShortVideo uploadVideoAndThumbnail(Contact sender, String videoUrl, String thumbnailUrl, String videoName) throws IOException {

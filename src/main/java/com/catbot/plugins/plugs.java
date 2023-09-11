@@ -12,9 +12,11 @@ import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.*;
+import net.mamoe.mirai.utils.ExternalResource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 
 import static com.catbot.utils.OK3HttpClient.httpGetAsync;
@@ -24,6 +26,7 @@ import static com.catbot.utils.SendMsgUtils.*;
 @Slf4j
 @MiraiEventListener
 public class plugs {
+
     @Listener(value = "测试", method = GroupMessageEvent.class)
     public void sndMessage(GroupMessageEvent event) throws IOException {
 //        https://api.yujn.cn/api/ndym.php?type=json
@@ -34,36 +37,25 @@ public class plugs {
         String url = asJsonObject.get("jumpUrl").getAsString();
         ShortVideo shortVideo = VideoUploadUtil.uploadVideoAndThumbnail(event.getGroup(), url, preview, "");
         sendAsync(event.getGroup(), shortVideo);
+
     }
 
 
-    //    @Listener(method = GroupMessageEvent.class, value = "图片", matchType = MatchType.DEFAULT)
-//    public void sedImage(GroupMessageEvent event) throws IOException {
-////        Image image = event.getGroup().uploadImage(ExternalResource.create(new URL("https://api.yimian.xyz/img?display=false").openStream()));
-////        event.getGroup().sendMessage(image);
-//        String s = event.getMessage().contentToString();
-//        MessageChain chain = new MessageChainBuilder()
-//                .append("Hello ")
-//                .append("mirai!")
-//                .build();
-//        MessageSource.quote(chain).
-//    }
-    @Listener(method = GroupMessageEvent.class, value = "回复")
-    public void testSendQuote(GroupMessageEvent event) {
+    @Listener(method = GroupMessageEvent.class, value = "图片")
+    public void sedImage(GroupMessageEvent event) throws IOException {
+        Image image = event.getGroup().uploadImage(ExternalResource.create(new URL("https://api.yimian.xyz/img?display=false").openStream()));
+
+
         MessageChainBuilder singleMessages = new MessageChainBuilder();
         singleMessages.append(new QuoteReply(event.getMessage()));
-        singleMessages.append("Hello ");
-        event.getGroup().sendMessage(singleMessages.build()).recallIn(1000L);
+        singleMessages.append(image);
+        sendAsync(event.getGroup(), singleMessages.build());
     }
 
-    @Listener(method = GroupMessageEvent.class, value = "撤回")
-    public void testSendQuoteRe(GroupMessageEvent event) {
-        MessageSource.recall(event.getMessage());
-//        event.getGroup().get()
-//        MessageSource.recall();
-
+    @Listener(method = GroupMessageEvent.class, value = "回复")
+    public void testSendQuote(GroupMessageEvent event) {
+        sendAsyncReply(event, "hello");
     }
-
 
     @Listener(method = GroupMessageEvent.class, value = "禁言", useRegex = true)
     public void Mute(GroupMessageEvent event) {
@@ -117,9 +109,8 @@ public class plugs {
             String cover = asJsonObject.get("Cover").getAsString();
             String Video = asJsonObject.get("Video").getAsString();
             ShortVideo shortVideo = VideoUploadUtil.uploadVideoAndThumbnail(event.getGroup(), Video, cover, "");
+
             sendAsync(event.getGroup(), shortVideo);
-
-
         } catch (Exception e) {
             log.warn("Error uploading Video %s".formatted(e.getMessage()));
         }

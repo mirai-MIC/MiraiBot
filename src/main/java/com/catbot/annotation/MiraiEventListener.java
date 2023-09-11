@@ -9,10 +9,9 @@ import java.lang.annotation.*;
  * @BelongsPackage: com.catbot.annotation
  * @Author: mi
  * @CreateTime: 2023/9/4 17:34
- * @Description:
+ * @Description: 用于在bot插件或涉及到bot操作的类上标记，让bot这是一个所属于bot的插件
  * @Version: 1.0
  */
-
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

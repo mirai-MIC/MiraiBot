@@ -1,16 +1,10 @@
 package com.catbot.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.internal.deps.okhttp3.OkHttpClient;
-import net.mamoe.mirai.internal.deps.okhttp3.Request;
-import net.mamoe.mirai.internal.deps.okhttp3.Response;
-import net.mamoe.mirai.internal.deps.okhttp3.ResponseBody;
 import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
  */
 
 @Slf4j
+@SuppressWarnings({"all"})
 public class SendMsgUtils {
     public SendMsgUtils() {
     }
@@ -58,27 +53,21 @@ public class SendMsgUtils {
         }
     }
 
-
-    public static Image uploadAndCreateImage(Contact sender, @NotNull String imageUrl) throws IOException {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(imageUrl)
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                log.error("Failed to download image: " + response);
-            }
-            ResponseBody responseBody = Objects.requireNonNull(response.body());
-            InputStream inputStream = responseBody.byteStream();
-            Image image = sender.uploadImage(ExternalResource.create(inputStream));
-            inputStream.close();
-            responseBody.close();
-            return image;
-        }
-    }
-
-    static ExternalResource downloadExternalResource(okhttp3.OkHttpClient client, String url) throws IOException {
+    /**
+     *
+     * # 发送视频
+     * <p>
+     *
+     * 发送视频前操作，下载视频
+     *
+     * @param event
+     * @param client
+     * @param url
+     * @return
+     * @throws IOException
+     * @see VideoUploadUtil
+     */
+    public static ExternalResource downloadExternalResource(okhttp3.OkHttpClient client, String url) throws IOException {
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(url)
                 .build();
@@ -99,34 +88,45 @@ public class SendMsgUtils {
         }
     }
 
-
-    public static CompletableFuture<Void> sendAsync(Group group, Message message) {
+    /**
+     * @param group   群
+     * @param message 所发送的消息
+     * @param <T>
+     */
+    public static <T> CompletableFuture<Void> sendAsync(Group group, T message) {
         return CompletableFuture.runAsync(() -> {
             try {
-                group.sendMessage(message);
+                if (message instanceof String string) {
+                    group.sendMessage(string);
+                } else if (message instanceof Message instance) {
+                    group.sendMessage(instance);
+                } else if (message instanceof MessageContent messageContent) {
+                    group.sendMessage(messageContent);
+                }
             } catch (Exception e) {
-                log.error("Failed to send message " + e.getMessage());
+                log.error("Failed to send message: " + e.getMessage());
             }
         });
     }
 
-    public static CompletableFuture<Void> sendAsync(Group group, MusicShare musicShare) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                group.sendMessage(musicShare);
-            } catch (Exception e) {
-                log.error("Failed to send message " + e.getMessage());
-            }
-        });
-    }
 
-    public static CompletableFuture<Void> sendAsync(Group group, String message) {
+    /**
+     * @param group   机器人收到的群消息的事件
+     * @param message 所发送的消息
+     * @param <T>
+     */
+    public static <T> CompletableFuture<Void> sendAsyncReply(GroupMessageEvent group, T message) {
         return CompletableFuture.runAsync(() -> {
-            try {
-                group.sendMessage(message);
-            } catch (Exception e) {
-                log.error("Failed to send message " + e.getMessage());
+            MessageChainBuilder singleMessages = new MessageChainBuilder();
+            singleMessages.append(new QuoteReply(group.getMessage()));
+            if (message instanceof String messageStr) {
+                singleMessages.append(messageStr);
+            } else if (message instanceof Message s) {
+                singleMessages.append(s);
+            } else if (message instanceof Image image) {
+                singleMessages.append(image);
             }
+            sendAsync(group.getGroup(), singleMessages.build());
         });
     }
 
