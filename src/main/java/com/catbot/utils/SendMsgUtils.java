@@ -54,10 +54,9 @@ public class SendMsgUtils {
     }
 
     /**
-     *
      * # 发送视频
      * <p>
-     *
+     * <p>
      * 发送视频前操作，下载视频
      *
      * @param event

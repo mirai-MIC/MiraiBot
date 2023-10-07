@@ -1,0 +1,17 @@
+<!-- logback.xml 或 logback-spring.xml -->
+
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 设置输出格式 -->
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <!-- 设置KOOK Bot的日志级别为DEBUG -->
+    <logger name="love.forte.simbot.kook.event" level="info"/>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

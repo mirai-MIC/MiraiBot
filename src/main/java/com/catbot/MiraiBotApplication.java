@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import xyz.cssxsh.mirai.tool.FixProtocolVersion;
 
+
 @EnableAspectJAutoProxy
 @SpringBootApplication
 public class MiraiBotApplication {

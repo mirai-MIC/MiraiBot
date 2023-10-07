@@ -99,6 +99,7 @@ public class plugs {
 
     }
 
+
     @Listener(value = "看小姐姐", method = GroupMessageEvent.class)
     public void Video(GroupMessageEvent event) throws IOException {
         try {

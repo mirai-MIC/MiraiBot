@@ -1,6 +1,8 @@
-package com.catbot.annotation;
+package com.catbot.Aspects;
 
 
+import com.catbot.annotation.Listener;
+import com.catbot.annotation.MiraiEventListener;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.Event;
@@ -23,6 +25,7 @@ import java.lang.reflect.Method;
 
 @Component
 @Slf4j
+@SuppressWarnings({"all"})
 public class MiraiEventListenerProcessor {
 
     /**
@@ -30,7 +33,6 @@ public class MiraiEventListenerProcessor {
      * 虽然这段代码没有显式地使用AOP（切面）来实现，但它本身具有一定的切面特性，因为它通过扫描Bean并根据注解条件来触发方法调用，这与AOP的思想有些类似。所以，可以说这个代码在某种程度上实现了一种简单的事件驱动的切面。
      * 如果你认为需要更多的切面特性，例如在方法执行前后执行额外的逻辑，你可以考虑使用Spring的AOP来实现更复杂的切面功能。这将允许你更精细地控制方法的执行和事件的处理。
      */
-
     private final ApplicationContext applicationContext;
 
     @Autowired
@@ -39,25 +41,29 @@ public class MiraiEventListenerProcessor {
         registerEventListeners();
     }
 
+    // 通过 @Autowired 注解，将 Spring 容器注入到 MiraiEventListenerProcessor 类中
     private void registerEventListeners() {
+        // 遍历 Spring 容器中所有带有 @MiraiEventListener 注解的 Bean
         applicationContext.getBeansWithAnnotation(MiraiEventListener.class).forEach((beanName, bean) -> {
             Class<?> clazz = bean.getClass();
             Method[] methods = clazz.getDeclaredMethods();
             for (Method method : methods) {
+                // 遍历 Bean 中所有带有 @Listener 注解的方法
                 if (method.isAnnotationPresent(Listener.class)) {
                     Listener filterAnnotation = method.getAnnotation(Listener.class);
                     Class<?> eventType = filterAnnotation.method();
                     String value = filterAnnotation.value();
                     Class<? extends Event> eventSubtype = (Class<? extends Event>) eventType;
                     boolean useRegex = filterAnnotation.useRegex(); // 获取是否使用正则表达式标志
-
+                    // 为 GlobalEventChannel 注册事件监听器
                     GlobalEventChannel.INSTANCE.subscribeAlways(eventSubtype, event -> {
                         try {
+                            // 如果事件类型是 MessageEvent，那么需要根据正则表达式来匹配消息内容
                             if (event instanceof MessageEvent messageEvent) {
                                 String messageContent = messageEvent.getMessage().contentToString();
                                 if (useRegex) {
                                     // 使用正则表达式匹配消息内容
-                                    if (messageContent.matches(".*" + value + ".*")) {
+                                    if (messageContent.matches(".*%s.*".formatted(value))) {
                                         method.invoke(bean, event);
                                     }
                                 } else {

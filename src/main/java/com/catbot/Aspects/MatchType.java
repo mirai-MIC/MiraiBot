@@ -1,4 +1,4 @@
-package com.catbot.annotation;
+package com.catbot.Aspects;
 
 /**
  * @BelongsProject: MiraiBot
