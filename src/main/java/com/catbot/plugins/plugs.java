@@ -2,6 +2,8 @@ package com.catbot.plugins;
 
 import com.catbot.annotation.Listener;
 import com.catbot.annotation.MiraiEventListener;
+import com.catbot.config.BigModelNew;
+import com.catbot.config.data.ModelData;
 import com.catbot.plugins.data.MusicData;
 import com.catbot.plugins.data.MusicShareData;
 import com.catbot.utils.OK3HttpClient;
@@ -9,16 +11,21 @@ import com.catbot.utils.PatternUtils;
 import com.catbot.utils.VideoUploadUtil;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 
+import static com.catbot.config.BigModelNew.NewQuestion;
+import static com.catbot.config.BigModelNew.getAuthUrl;
 import static com.catbot.utils.OK3HttpClient.httpGetAsync;
 import static com.catbot.utils.SendMsgUtils.*;
 
@@ -26,6 +33,8 @@ import static com.catbot.utils.SendMsgUtils.*;
 @Slf4j
 @MiraiEventListener
 public class plugs {
+    @Resource
+    private ModelData data;
 
     @Listener(value = "测试", method = GroupMessageEvent.class)
     public void sndMessage(GroupMessageEvent event) throws IOException {
@@ -99,7 +108,6 @@ public class plugs {
 
     }
 
-
     @Listener(value = "看小姐姐", method = GroupMessageEvent.class)
     public void Video(GroupMessageEvent event) throws IOException {
         try {
@@ -110,10 +118,20 @@ public class plugs {
             String cover = asJsonObject.get("Cover").getAsString();
             String Video = asJsonObject.get("Video").getAsString();
             ShortVideo shortVideo = VideoUploadUtil.uploadVideoAndThumbnail(event.getGroup(), Video, cover, "");
-
             sendAsync(event.getGroup(), shortVideo);
         } catch (Exception e) {
             log.warn("Error uploading Video %s".formatted(e.getMessage()));
         }
+    }
+
+    @Listener(method = GroupMessageEvent.class)
+    public void startAI(GroupMessageEvent event) throws Exception {
+        if (!event.getMessage().contentToString().startsWith("/send")) return;
+        NewQuestion = event.getMessage().contentToString();
+        String authUrl = getAuthUrl(data.getHostUrl(), data.getApiKey(), data.getApiSecret());
+        OkHttpClient client = new OkHttpClient.Builder().build();
+        String url = authUrl.replace("http://", "ws://").replace("https://", "wss://");
+        Request request = new Request.Builder().url(url).build();
+        client.newWebSocket(request, new BigModelNew(event, false));
     }
 }

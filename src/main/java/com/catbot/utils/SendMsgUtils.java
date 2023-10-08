@@ -110,6 +110,7 @@ public class SendMsgUtils {
 
 
     /**
+     * <h1>异步发送</h1>
      * @param group   机器人收到的群消息的事件
      * @param message 所发送的消息
      * @param <T>
@@ -126,6 +127,21 @@ public class SendMsgUtils {
                 singleMessages.append(image);
             }
             sendAsync(group.getGroup(), singleMessages.build());
+        });
+    }
+
+
+    /**
+     * <h1>封装转发消息</h1>
+     * @param event   机器人收到的群消息的事件
+     * @param message 所发送的消息
+     * @param <T>
+     */
+    public static <T> CompletableFuture<Void> MiraiForwardMessageBuild(GroupMessageEvent event, MessageChain message) {
+        return CompletableFuture.runAsync(() -> {
+            ForwardMessageBuilder iNodes = new ForwardMessageBuilder(event.getGroup());
+            iNodes.add(event.getSender().getId(), event.getSenderName(), message);
+            sendAsync(event.getGroup(), iNodes.build());
         });
     }
 

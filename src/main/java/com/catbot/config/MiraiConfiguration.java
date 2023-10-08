@@ -55,8 +55,6 @@ public class MiraiConfiguration {
      *         <span style="font-size:15px;>通过 botConfiguration.setBotLoggerSupplier 方法设置第三方日志框架</span>
      *     </li>
      * </ul>
-     *
-     *
      */
     @Bean(initMethod = "login")
     public Bot login() {
@@ -65,7 +63,7 @@ public class MiraiConfiguration {
             botConfiguration.fileBasedDeviceInfo(deviceInfo);
             botConfiguration.autoReconnectOnForceOffline();
             botConfiguration.noNetworkLog();
-            botConfiguration.setBotLoggerSupplier(bot -> new Mylog());
+            botConfiguration.setBotLoggerSupplier(bot -> new SettingMiraiLogger());
         });
     }
 }

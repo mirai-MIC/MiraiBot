@@ -1,9 +1,17 @@
-
 mirai:
   bot:
     qq-number: qqid
     password: password
     device-info: "cache/deviceInfo.json"
+model:
+  setting:
+    hostUrl: ""
+    appid: ""
+    apiSecret: ""
+    apiKey: ""
 logging:
   level:
     root: info
+
+
+

@@ -1,10 +1,11 @@
 package com.catbot;
 
-import net.mamoe.mirai.utils.BotConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import xyz.cssxsh.mirai.tool.FixProtocolVersion;
+import top.mrxiaom.qsign.QSignService;
+
+import java.io.File;
 
 
 @EnableAspectJAutoProxy
@@ -12,7 +13,9 @@ import xyz.cssxsh.mirai.tool.FixProtocolVersion;
 public class MiraiBotApplication {
 
     public static void main(String[] args) {
-        FixProtocolVersion.fetch(BotConfiguration.MiraiProtocol.ANDROID_PHONE, "8.9.63");
+        QSignService.Factory.init(new File("txlib/8.9.68"));
+        QSignService.Factory.loadProtocols(null);
+        QSignService.Factory.register();
         SpringApplication.run(MiraiBotApplication.class, args);
     }
 }
