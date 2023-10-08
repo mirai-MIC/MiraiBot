@@ -111,6 +111,7 @@ public class SendMsgUtils {
 
     /**
      * <h1>异步发送</h1>
+     *
      * @param group   机器人收到的群消息的事件
      * @param message 所发送的消息
      * @param <T>
@@ -133,6 +134,7 @@ public class SendMsgUtils {
 
     /**
      * <h1>封装转发消息</h1>
+     *
      * @param event   机器人收到的群消息的事件
      * @param message 所发送的消息
      * @param <T>

@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *
  * <h1>Mirai 配置类</h1>
  * 通过 @Configuration 注解，将 MiraiConfiguration 类注入到 Spring 容器中
  */
@@ -26,8 +25,6 @@ public class MiraiConfiguration {
     private String deviceInfo;
 
     /**
-     *
-     *
      * <ul>
      *     <li>
      *         <span style="font-size:20px;">通过 @Bean 注解，将 login 方法注入到 Spring 容器中</span>
