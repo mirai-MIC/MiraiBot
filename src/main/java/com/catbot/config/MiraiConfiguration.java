@@ -56,7 +56,7 @@ public class MiraiConfiguration {
     @Bean(initMethod = "login")
     public Bot login() {
         return BotFactory.INSTANCE.newBot(qqNumber, BotAuthorization.byPassword(password), botConfiguration -> {
-            botConfiguration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PHONE);
+            botConfiguration.setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PAD);
             botConfiguration.fileBasedDeviceInfo(deviceInfo);
             botConfiguration.autoReconnectOnForceOffline();
             botConfiguration.noNetworkLog();

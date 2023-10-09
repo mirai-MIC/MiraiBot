@@ -16,6 +16,7 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -40,8 +41,8 @@ public class BigModelNew extends WebSocketListener {
     public static String NewQuestion = "";
     public static List<RoleContent> historyList = new ArrayList<>(); // 对话历史存储集合
     private final GroupMessageEvent event;
-    @Resource
-    private ModelData modelData;
+
+
     private Boolean wsCloseFlag;
 
     public BigModelNew(GroupMessageEvent event, Boolean wsCloseFlag) {
@@ -182,8 +183,8 @@ public class BigModelNew extends WebSocketListener {
         public MyThread(WebSocket webSocket) {
             this.webSocket = webSocket;
         }
-
         public void run() {
+
             try {
                 JSONObject requestJson = new JSONObject();
 

@@ -1,6 +1,7 @@
 package com.catbot.annotation;
 
-import com.catbot.Aspects.MatchType;
+import net.mamoe.mirai.event.Event;
+import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -20,17 +21,23 @@ public @interface Listener {
      */
     String value() default "";
 
-    MatchType matchType() default MatchType.DEFAULT;
-
     /**
-     * 需要处理的事件类型
-     * (此bot框架下，所有插件或者bot操作，全部都需要标记bot事件类型才能触发)
+     * 匹配类型
+     *
+     * @return
      */
-    Class<?> method();
+    Class<? extends Event> method();
 
     /**
      * 是否启用正则
      */
     boolean useRegex() default false;
+
+    /**
+     * 自定义正则
+     *
+     * @return
+     */
+    String autoRegex() default "";
 
 }

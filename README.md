@@ -66,7 +66,7 @@ logging:
 
 # 如果需要建议联系
 
-- **[x] qq群 620428906**
+- **[x] [点击链接加入群聊【二三彡叁的AE86[1]】](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=AqIRVBcX2yby3ry9ek_AysZjVdhQ9oIC&authKey=peMV%2B2dosuBa05OMLEwlUJ7JoZOiGT6ve0m9xhzz%2Frz%2BH7SwSe5ch1V4s8DzoO8g&noverify=0&group_code=620428906)**
 
 - **[x] kook频道 [kook](https://kook.top/1069PT)**
   ![](https://jihulab.com/weblog/gallery03/-/raw/master/pc/672bd3d5e4edb055a418d2e3b0aca7fc3.jpg)

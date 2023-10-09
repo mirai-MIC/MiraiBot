@@ -41,45 +41,47 @@ public class MiraiEventListenerProcessor {
         registerEventListeners();
     }
 
-    // 通过 @Autowired 注解，将 Spring 容器注入到 MiraiEventListenerProcessor 类中
-    private void registerEventListeners() {
-        // 遍历 Spring 容器中所有带有 @MiraiEventListener 注解的 Bean
+    //     通过 @Autowired 注解，将 Bot 对象注入到 MiraiEventListenerProcessor 类中
+    public void registerEventListeners() {
         applicationContext.getBeansWithAnnotation(MiraiEventListener.class).forEach((beanName, bean) -> {
             Class<?> clazz = bean.getClass();
             Method[] methods = clazz.getDeclaredMethods();
-            for (Method method : methods) {
-                // 遍历 Bean 中所有带有 @Listener 注解的方法
-                if (method.isAnnotationPresent(Listener.class)) {
-                    Listener filterAnnotation = method.getAnnotation(Listener.class);
-                    Class<?> eventType = filterAnnotation.method();
-                    String value = filterAnnotation.value();
-                    Class<? extends Event> eventSubtype = (Class<? extends Event>) eventType;
-                    boolean useRegex = filterAnnotation.useRegex(); // 获取是否使用正则表达式标志
-                    // 为 GlobalEventChannel 注册事件监听器
-                    GlobalEventChannel.INSTANCE.subscribeAlways(eventSubtype, event -> {
-                        try {
-                            // 如果事件类型是 MessageEvent，那么需要根据正则表达式来匹配消息内容
-                            if (event instanceof MessageEvent messageEvent) {
-                                String messageContent = messageEvent.getMessage().contentToString();
-                                if (useRegex) {
-                                    // 使用正则表达式匹配消息内容
-                                    if (messageContent.matches(".*%s.*".formatted(value))) {
-                                        method.invoke(bean, event);
-                                    }
-                                } else {
-                                    // 不使用正则表达式，直接比较消息内容
-                                    if (value.isEmpty() || messageContent.equals(value)) {
-                                        method.invoke(bean, event);
-                                    }
-                                }
-                            } else {
-                                method.invoke(bean, event);
-                            }
-                        } catch (Exception e) {
-                            log.error(e.getMessage());
+            for (var method : methods) {
+                if (!method.isAnnotationPresent(Listener.class)) continue;
+                Listener filterAnnotation = method.getAnnotation(Listener.class);
+                Class<?> eventType = filterAnnotation.method();
+                String value = filterAnnotation.value();
+                Class<? extends Event> eventSubtype = (Class<? extends Event>) eventType;
+                boolean useRegex = filterAnnotation.useRegex(); // 获取是否使用正则表达式标志
+                String autoed = filterAnnotation.autoRegex();
+                register(eventSubtype, method, useRegex, value, bean);
+            }
+        });
+    }
+
+    // 注册事件监听器
+    public void register(Class<? extends Event> T, Method method, boolean useRegex, String value, Object bean) {
+        GlobalEventChannel.INSTANCE.subscribeAlways(T, event -> {
+            try {
+                // 如果事件类型是 MessageEvent，那么需要根据正则表达式来匹配消息内容
+                if (event instanceof MessageEvent messageEvent) {
+                    String messageContent = messageEvent.getMessage().contentToString();
+                    if (useRegex) {
+                        // 使用正则表达式匹配消息内容
+                        if (messageContent.matches(".*%s.*".formatted(value))) {
+                            method.invoke(bean, event);
                         }
-                    });
+                    } else {
+                        // 不使用正则表达式，直接比较消息内容
+                        if (value.isEmpty() || messageContent.equals(value)) {
+                            method.invoke(bean, event);
+                        }
+                    }
+                } else {
+                    method.invoke(bean, event);
                 }
+            } catch (Exception e) {
+                log.error(e.getMessage());
             }
         });
     }
