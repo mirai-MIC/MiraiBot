@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
 @SuppressWarnings({"all"})
 public class MiraiEventListenerProcessor {
 
+
     /**
      * 这段代码是一个事件监听器的处理器，它的主要功能是扫描Spring应用上下文中带有@MiraiEventListener注解的Bean，并为这些Bean注册事件监听器。当事件触发时，它会根据@Filter注解中的条件来决定是否调用相应的方法。
      * 虽然这段代码没有显式地使用AOP（切面）来实现，但它本身具有一定的切面特性，因为它通过扫描Bean并根据注解条件来触发方法调用，这与AOP的思想有些类似。所以，可以说这个代码在某种程度上实现了一种简单的事件驱动的切面。
@@ -41,23 +42,6 @@ public class MiraiEventListenerProcessor {
         registerEventListeners();
     }
 
-    //     通过 @Autowired 注解，将 Bot 对象注入到 MiraiEventListenerProcessor 类中
-    public void registerEventListeners() {
-        applicationContext.getBeansWithAnnotation(MiraiEventListener.class).forEach((beanName, bean) -> {
-            Class<?> clazz = bean.getClass();
-            Method[] methods = clazz.getDeclaredMethods();
-            for (var method : methods) {
-                if (!method.isAnnotationPresent(Listener.class)) continue;
-                Listener filterAnnotation = method.getAnnotation(Listener.class);
-                Class<?> eventType = filterAnnotation.method();
-                String value = filterAnnotation.value();
-                Class<? extends Event> eventSubtype = (Class<? extends Event>) eventType;
-                boolean useRegex = filterAnnotation.useRegex(); // 获取是否使用正则表达式标志
-                String autoed = filterAnnotation.autoRegex();
-                register(eventSubtype, method, useRegex, value, bean);
-            }
-        });
-    }
 
     // 注册事件监听器
     public void register(Class<? extends Event> T, Method method, boolean useRegex, String value, Object bean) {
@@ -86,4 +70,18 @@ public class MiraiEventListenerProcessor {
         });
     }
 
+    public void registerEventListeners() {
+        applicationContext.getBeansWithAnnotation(MiraiEventListener.class).forEach((beanName, bean) -> {
+            Class<?> clazz = bean.getClass();
+            Method[] methods = clazz.getDeclaredMethods();
+            for (var method : methods) {
+                if (!method.isAnnotationPresent(Listener.class)) continue;
+                Listener filterAnnotation = method.getAnnotation(Listener.class);
+                String value = filterAnnotation.value();
+                boolean useRegex = filterAnnotation.useRegex();
+                Class<? extends Event> aClass = filterAnnotation.method();
+                register(aClass, method, useRegex, value, bean);
+            }
+        });
+    }
 }

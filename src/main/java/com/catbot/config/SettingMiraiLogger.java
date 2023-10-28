@@ -5,12 +5,8 @@ import net.mamoe.mirai.utils.MiraiLoggerPlatformBase;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @BelongsProject: MiraiBot
- * @BelongsPackage: com.catbot.config
- * @Author: mi
- * @CreateTime: 2023/10/7 23:41
- * @Description:
- * @Version: 1.0
+ * <h1>自定义 Mirai 日志类</h1>
+ * 通过继承 MiraiLoggerPlatformBase 类，实现自定义日志类
  */
 
 @Slf4j

@@ -13,7 +13,7 @@ import java.io.File;
 public class MiraiBotApplication {
 
     public static void main(String[] args) {
-        QSignService.Factory.init(new File("txlib/8.9.68"));
+        QSignService.Factory.init(new File("txlib/8.9.73"));
         QSignService.Factory.loadProtocols(null);
         QSignService.Factory.register();
         SpringApplication.run(MiraiBotApplication.class, args);

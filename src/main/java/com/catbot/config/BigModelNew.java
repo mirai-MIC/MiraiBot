@@ -189,7 +189,7 @@ public class BigModelNew extends WebSocketListener {
                 JSONObject requestJson = new JSONObject();
 
                 JSONObject header = new JSONObject();  // header参数
-                header.put("app_id", modelData.getAppid());
+                header.put("app_id", "42616b87");
                 header.put("uid", UUID.randomUUID().toString().substring(0, 10));
 
                 JSONObject parameter = new JSONObject(); // parameter参数
